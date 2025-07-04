@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='img/logo.png') }}"
+      type="image/png"
+    />
+    <title>Infinity</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #e0f7fa;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+      }
+      .left,
+      .right {
+        padding: 40px;
+        position: relative;
+        z-index: 1;
+      }
+      .left {
+        width: 50%;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .right {
+        width: 50%;
+        background: #f2f2f2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logo {
+        position: absolute;
+        top: 2px;
+        left: 30px;
+        display: flex;
+        align-items: center;
+      }
+      .logo img {
+        height: 70px;
+        width: auto;
+      }
+      .logo h1 {
+        margin-left: 10px;
+        font-size: 39px;
+        font-weight: bold;
+        color: #2da9aa;
+      }
+      .headline {
+        font-size: 42px;
+        font-weight: bold;
+        margin-top: 40px;
+        margin-bottom: 20px;
+      }
+      .illustration {
+        width: 85%;
+        margin: 0 auto;
+      }
+      .form-container {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+      .error-message {
+        background-color: #ffe0e0;
+        color: #d8000c;
+        border: 1px solid #ffb3b3;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        font-size: 16px;
+        text-align: center;
+        transition: opacity 0.3s ease;
+        opacity: 1;
+      }
+
+      .form-container h2 {
+        margin-bottom: 20px;
+        font-size: 30px;
+      }
+      .form-container label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        font-size: 20px;
+      }
+      .form-container input {
+        width: 100%;
+        padding: 13px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+      }
+      .form-container button {
+        width: 100%;
+        padding: 10px;
+        background: #381cd6;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+      }
+      .form-container button:hover {
+        background: #2f17b0;
+      }
+      .form-container .toggle-text {
+        font-size: 14px;
+        text-align: center;
+        margin-top: 10px;
+      }
+      .form-container .toggle-text span {
+        color: #4b0082;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      #confirmPasswordWrapper {
+        display: none;
+      }
+      .wave-container {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 120px;
+        z-index: 1;
+        overflow: hidden;
+      }
+      .wave-container svg {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="left">
+      <div class="logo">
+        <img
+          src="{{ url_for('static', filename='img/logo.png') }}"
+          alt="Infinity Logo"
+          style="height: 70px; width: auto"
+        />
+        <h1>Infinity</h1>
+      </div>
+      <h1 class="headline">Peer reviews that power your learning journey 💡</h1>
+      <img
+        src="{{ url_for('static', filename='img/illustration.png') }}"
+        alt="illustration"
+        class="illustration"
+      />
+    </div>
+
+    <div class="right">
+      <div class="form-container">
+        <h2 id="formTitle">Login</h2>
+        <p id="errorMessage" class="error-message" style="display: none"></p>
+        <form id="authForm">
+          <label for="email">Email or Username</label>
+          <input
+            type="text"
+            id="email"
+            placeholder="Enter email or username"
+            required
+          />
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter password"
+            required
+          />
+          <div id="confirmPasswordWrapper">
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm password"
+            />
+          </div>
+          <button type="submit" id="submitBtn">Log in</button>
+        </form>
+        <p class="toggle-text" id="toggleText">
+          Don’t have an account? <span id="toggleMode">Sign up</span>
+        </p>
+        <p id="forgotPassword" class="toggle-text">Forgot password?</p>
+      </div>
+    </div>
+
+    <div class="wave-container">
+      <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path
+          fill="#BAFFFB"
+          fill-opacity="1"
+          d="M0,96L60,112C120,128,240,160,360,160C480,160,600,128,720,112C840,96,960,96,1080,90.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+        ></path>
+      </svg>
+    </div>
+
+    <script>
+      const formTitle = document.getElementById("formTitle");
+      const confirmPasswordWrapper = document.getElementById(
+        "confirmPasswordWrapper"
+      );
+      const toggleText = document.getElementById("toggleText");
+      const forgotPassword = document.getElementById("forgotPassword");
+      const submitBtn = document.getElementById("submitBtn");
+      let isLogin = true;
+
+      // Toggle login/signup mode
+      function toggleAuthMode() {
+        isLogin = !isLogin;
+        formTitle.textContent = isLogin ? "Login" : "Sign Up";
+        submitBtn.textContent = isLogin ? "Log in" : "Sign up";
+        confirmPasswordWrapper.style.display = isLogin ? "none" : "block";
+        toggleText.innerHTML = isLogin
+          ? `Don’t have an account? <span id="toggleMode">Sign up</span>`
+          : `Already have an account? <span id="toggleMode">Log in</span>`;
+        forgotPassword.style.display = isLogin ? "block" : "none";
+        document
+          .getElementById("toggleMode")
+          .addEventListener("click", toggleAuthMode);
+      }
+
+      document
+        .getElementById("toggleMode")
+        .addEventListener("click", toggleAuthMode);
+
+      // Handle form submit
+      document
+        .getElementById("authForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const confirm = document.getElementById("confirmPassword")?.value;
+
+          const url = isLogin ? "/login" : "/signup";
+
+          const formData = new FormData();
+          formData.append("email", email);
+          formData.append("password", password);
+          if (!isLogin) formData.append("confirm", confirm);
+
+          try {
+            const res = await fetch(url, {
+              method: "POST",
+              body: formData,
+            });
+            const result = await res.json();
+
+            const errorMessage = document.getElementById("errorMessage");
+
+            if (result.status === "success") {
+              errorMessage.style.display = "none"; // clear any previous error
+              if (result.redirect) {
+                window.location.href = result.redirect;
+              } else {
+                alert(result.message); // Optional success info
+                toggleAuthMode();
+              }
+            } else {
+              errorMessage.textContent = result.message;
+              errorMessage.style.display = "block";
+              errorMessage.style.opacity = "1";
+
+              setTimeout(() => {
+                errorMessage.style.opacity = "0";
+                setTimeout(() => {
+                  errorMessage.style.display = "none";
+                }, 300); // wait for fade to complete
+              }, 1500);
+            }
+          } catch (err) {
+            console.error("Error:", err);
+            alert("Something went wrong. Please try again.");
+          }
+        });
+    </script>
+  </body>
+</html>

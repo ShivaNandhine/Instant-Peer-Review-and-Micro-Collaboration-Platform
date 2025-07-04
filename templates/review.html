@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infinity</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #009999;
+      color: white;
+      padding: 24px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      height: 40px;
+      width: 40px;
+    }
+
+    .logo-text {
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .nav-menu {
+      padding-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: white;
+      transition: background 0.2s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background-color: #247979;
+    }
+
+    .nav-link.active {
+      background-color: #1E7A7A;
+    }
+
+    .nav-icon {
+      font-size: 18px;
+      margin-right: 10px;
+    }
+
+    .nav-text {
+      font-size: 15px;
+      width: 220px;
+    }
+
+    .content {
+      margin-left: 250px;
+      /* Same as sidebar width */
+      padding: 30px;
+      background-color: #ffffff;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+
+    .header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .review-card {
+      display: flex;
+      justify-content: space-between;
+      background-color: #F8F9FA;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .review-left {
+      max-width: 65%;
+    }
+
+    .review-left h4 {
+      margin: 0 0 5px;
+      font-size: 16px;
+    }
+
+    .project-tag {
+      background-color: #DDECF1;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      color: #007C7C;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .review-content {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .review-tags {
+      color: #666;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .review-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .feedback-summary {
+      width: 30%;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .feedback-summary h5 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #007C7C;
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='img/logo_white.png') }}" alt="Infinity Logo" class="logo-img" />
+      <span class="logo-text">INFINITY</span>
+    </div>
+    <nav class="nav-menu">
+      <a href="{{ url_for('home') }}" class="nav-link">
+        <span class="nav-icon">🏡</span>
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="{{ url_for('project') }}" class="nav-link">
+        <span class="nav-icon">📁</span>
+        <span class="nav-text">My projects</span>
+      </a>
+      <a href="#" class="nav-link active">
+        <span class="nav-icon">📄</span>
+        <span class="nav-text">Reviews Received</span>
+      </a>
+      <a href="{{ url_for('microcollab') }}" class="nav-link">
+        <span class="nav-icon">👥</span>
+        <span class="nav-text">Micro-Collab</span>
+      </a>
+    </nav>
+  </aside>
+
+  <div class="content">
+    <div class="header">Reviews Received</div>
+
+    <div id="review-container"></div>
+  </div>
+
+  <script>
+    // static/js/review.js
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const response = await fetch('/get_reviews'); // Fetch all reviews for logged-in user
+      const reviews = await response.json();
+      const container = document.getElementById('review-container');
+
+      for (let rev of reviews) {
+        const summary = await getAISummary(rev.project_desc, rev.comments.map(c => ({
+          user_id: c.user_id,
+          text: c.text
+        })));
+
+        const card = document.createElement('div');
+        card.classList.add('review-card');
+
+        const reviewHTML = `
+      <div class="review-left">
+        <h4><span class="project-tag">${rev.project_title}</span></h4>
+        <div class="review-content">
+          ${rev.comments.map(c => `<p><strong>${c.user_id}:</strong> ${c.text}</p>`).join('')}
+        </div>
+        <div class="review-time">${new Date(rev.comments[0]?.timestamp || Date.now()).toLocaleString()}</div>
+      </div>
+      <div class="feedback-summary">
+        <h5>Feedback Summary</h5>
+        <p>${summary}</p>
+      </div>
+    `;
+
+        card.innerHTML = reviewHTML;
+        container.appendChild(card);
+      }
+    });
+
+    async function getAISummary(description, comments) {
+      try {
+        const res = await fetch('/summarize_feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            project_desc: description,
+            comments: comments
+          })
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Gemini API Error:", errText);
+          return "Error fetching summary.";
+        }
+
+        const data = await res.json();
+        return data.summary || 'No summary available.';
+      } catch (err) {
+        console.error('Exception during summary generation:', err);
+        return 'Error generating summary.';
+      }
+    }
+
+  </script>
+</body>
+
+</html>

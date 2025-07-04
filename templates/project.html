@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infinity</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap">
+  <style>
+    /* === GENERAL RESET === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    /* === LAYOUT === */
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* === SIDEBAR === */
+    .sidebar {
+      width: 220px;
+      background-color: #009999;
+      color: white;
+      padding: 24px;
+      position: fixed;
+      /* make it fixed */
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      bottom: 30px;
+    }
+
+    .logo-img {
+      height: 40px;
+      width: 40px;
+    }
+
+    .logo-text {
+      font-size: 32px;
+      font-weight: bold;
+      bottom: 10px;
+      color: var(--light);
+    }
+
+    .nav-menu {
+      padding-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--light);
+      transition: background 0.2s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background-color: #247979;
+    }
+
+    .nav-icon {
+      font-size: 18px;
+      margin-right: 10px;
+    }
+
+    .nav-text {
+      font-size: 15px;
+    }
+
+    .nav-link.active {
+      background-color: #1E7A7A;
+    }
+
+    /* === MAIN === */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      margin-left: 220px;
+      /* to avoid overlapping with fixed sidebar */
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .top-bar h1 {
+      font-size: 28px;
+    }
+
+    .new-project-btn {
+      background-color: #00bfa5;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .new-project-btn:hover {
+      background-color: #009e88;
+    }
+
+    /* === MODAL === */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 400px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-content h2 {
+      margin-bottom: 20px;
+      color: #009999;
+    }
+
+    .modal-content label {
+      display: block;
+      margin: 10px 0 4px;
+      font-weight: bold;
+    }
+
+    .modal-content input,
+    .modal-content textarea,
+    .modal-content select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .modal-content button[type="submit"] {
+      background-color: #00bfa5;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .modal-content button[type="submit"]:hover {
+      background-color: #009e88;
+    }
+
+    .modal-content .close-btn {
+      margin-top: 10px;
+      background: none;
+      color: #009999;
+      border: none;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* === PROJECTS GRID & CARDS === */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .project-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .stage-label {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: white;
+    }
+
+    .project-card.idea .stage-label {
+      background-color: #f6c400;
+    }
+
+    .project-card.prototype .stage-label {
+      background-color: #6b63ff;
+    }
+
+    .project-card.final .stage-label {
+      background-color: #2db84c;
+    }
+
+    .tags {
+      font-size: 13px;
+      color: #666;
+      margin: 8px 0 10px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .card-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #f1f1f1;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-size: 14px;
+    }
+
+    .card-actions button:hover {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <img src="{{ url_for('static', filename='img/logo_white.png') }}" alt="Infinity Logo" class="logo-img" />
+        <span class="logo-text">INFINITY</span>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="{{ url_for('home') }}" class="nav-link">
+          <span class="nav-icon">🏡</span>
+          <span class="nav-text">Home</span>
+        </a>
+
+        <a href="{{ url_for('project') }}" class="nav-link active">
+          <span class="nav-icon">📁</span>
+          <span class="nav-text">My projects</span>
+        </a>
+        <a href="{{ url_for('review') }}" class="nav-link">
+          <span class="nav-icon">📄</span>
+          <span class="nav-text">Reviews Received</span>
+        </a>
+        <a href="{{ url_for('microcollab') }}" class="nav-link">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Micro-Collab</span>
+        </a>
+      </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-bar">
+        <h1>My Projects</h1>
+        <button class="new-project-btn" id="newProjectBtn">+ New Project</button>
+      </header>
+
+      <!-- Projects Grid -->
+      <section class="projects-grid" id="projectsGrid">
+        <!-- Sample project cards -->
+        <div class="project-card idea">
+          <div class="stage-label">Idea</div>
+          <h3>EcoBin – Smart Waste Sorting System</h3>
+          <p class="tags">#IoT #Environment #Automation</p>
+          <p>20%</p>
+          <div class="card-actions">
+            <button>Edit</button>
+            <button>Share</button>
+            <button>View</button>
+          </div>
+        </div>
+
+        <div class="project-card idea">
+          <div class="stage-label">Idea</div>
+          <h3>EduQuiz – Gamified Learning Platform</h3>
+          <p class="tags">#EdTech #Frontend #Gamification</p>
+          <p>100%</p>
+          <div class="card-actions">
+            <button>Edit</button>
+            <button>Share</button>
+            <button>View</button>
+          </div>
+        </div>
+
+        <div class="project-card prototype">
+          <div class="stage-label">Prototype</div>
+          <h3>MindMend – Mental Health Companion App</h3>
+          <p class="tags">#HealthTech #UXDesign #AI</p>
+          <p>55%</p>
+          <div class="card-actions">
+            <button>Edit</button>
+            <button>Share</button>
+            <button>View</button>
+          </div>
+        </div>
+
+        <div class="project-card prototype">
+          <div class="stage-label">Prototype</div>
+          <h3>PulseTrack – Fitness Tracker</h3>
+          <p class="tags">#Wearables #Dashboard #Analytics</p>
+          <p>60%</p>
+          <div class="card-actions">
+            <button>Edit</button>
+            <button>Share</button>
+            <button>View</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal Form -->
+      <div class="modal" id="newProjectModal">
+        <div class="modal-content">
+          <h2>Create New Project</h2>
+          <form id="projectForm">
+            <label>Title</label>
+            <input type="text" name="title" required>
+
+            <label>Description</label>
+            <textarea name="description" rows="4" required></textarea>
+
+            <label>Stage</label>
+            <select name="stage">
+              <option value="Idea">Idea</option>
+              <option value="Prototype">Prototype</option>
+              <option value="Final">Final</option>
+            </select>
+
+            <label>Tags</label>
+            <input type="text" name="tags" placeholder="#AI #IoT #WebDev">
+
+            <label>Optional Link</label>
+            <input type="url" name="link" placeholder="https://github.com/project">
+
+            <button type="submit">Submit</button>
+          </form>
+          <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // static/js/dashboard.js
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const openBtn = document.getElementById("newProjectBtn");
+      const modal = document.getElementById("newProjectModal");
+      const form = document.getElementById("projectForm");
+      const projectsGrid = document.getElementById("projectsGrid");
+
+      let editMode = false;
+      let editId = null;
+
+      // Open modal
+      openBtn.addEventListener("click", () => {
+        modal.style.display = "flex";
+        form.reset();
+        editMode = false;
+        editId = null;
+        form.onsubmit = handleFormSubmit;
+      });
+
+      // Close modal when clicking outside content
+      window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+
+      window.closeModal = function () {
+        modal.style.display = "none";
+      };
+
+      // Fetch and display user projects
+      async function loadUserProjects() {
+        const res = await fetch("/get_projects");
+        const projects = await res.json();
+        projectsGrid.innerHTML = "";
+
+        projects.forEach((proj) => {
+          const card = document.createElement("div");
+          card.classList.add("project-card", proj.stage.toLowerCase());
+          card.style.maxWidth = "300px";
+
+          card.innerHTML = `
+        <div class="stage-label">${proj.stage}</div>
+        <h3>${proj.title}</h3>
+        <p class="tags">${proj.tags}</p>
+        <div class="card-actions">
+          <button onclick="editProject('${proj._id}')">Edit</button>
+          <button onclick="viewProject('${proj._id}')">View</button>
+        </div>
+      `;
+          projectsGrid.appendChild(card);
+        });
+      }
+
+      // Handle form submit (add or edit)
+      function handleFormSubmit(e) {
+        e.preventDefault();
+        const data = {
+          title: form.title.value,
+          description: form.description.value,
+          stage: form.stage.value,
+          tags: form.tags.value,
+          link: form.link.value
+        };
+
+        const url = editMode ? `/edit_project/${editId}` : "/add_project";
+
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        })
+          .then(res => res.json())
+          .then(result => {
+            if (result.status === 'success') {
+              form.reset();
+              loadUserProjects();
+              closeModal();
+            }
+          });
+      }
+
+      // Edit project
+      window.editProject = async function (id) {
+        const res = await fetch(`/get_project/${id}`);
+        const data = await res.json();
+        form.title.value = data.title;
+        form.description.value = data.description;
+        form.stage.value = data.stage;
+        form.tags.value = data.tags;
+        form.link.value = data.link;
+
+        editMode = true;
+        editId = id;
+        modal.style.display = "flex";
+        form.onsubmit = handleFormSubmit;
+      }
+
+      // View project in modal
+      window.viewProject = async function (id) {
+        const res = await fetch(`/get_project/${id}`);
+        const proj = await res.json();
+
+        const viewModal = document.createElement("div");
+        viewModal.className = "modal";
+        viewModal.style.display = "flex";
+
+        viewModal.innerHTML = `
+      <div class="modal-content">
+        <h2>${proj.title}</h2>
+        <p><strong>Stage:</strong> ${proj.stage}</p>
+        <p><strong>Tags:</strong> ${proj.tags}</p>
+        <p><strong>Description:</strong><br>${proj.description}</p>
+        <button class="close-btn" onclick="this.closest('.modal').remove()">Close</button>
+      </div>
+    `;
+
+        document.body.appendChild(viewModal);
+      }
+
+      // Initial load
+      loadUserProjects();
+    });
+
+
+  </script>
+</body>
+
+</html>

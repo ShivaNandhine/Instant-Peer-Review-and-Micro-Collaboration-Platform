@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png" />
+  <title>MicroCollab Board</title>
+  <style>
+    :root {
+  --primary: #009999;
+  --accent: #2DA9AA;
+  --highlight: #1E7A7A;
+  --light: #F3F0FF;
+  --gray: #f4f6f8;
+  --text: #2E2E2E;
+}
+
+/* ===== RESET & BASE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: var(--gray);
+  color: var(--text);
+  display: flex;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 220px;
+  background-color: var(--primary);
+  color: white;
+  padding: 24px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.logo-img {
+  height: 40px;
+  width: 40px;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.nav-link:hover {
+  background-color: var(--highlight);
+}
+
+.nav-link.active {
+  background-color: var(--highlight);
+}
+
+.nav-icon {
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.nav-text {
+  font-size: 15px;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  margin-left: 220px;
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+header h1 {
+  font-size: 28px;
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+header button {
+  background: var(--highlight);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== FILTERS & TABS ===== */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.filters input[type="search"] {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.tab-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tab-button.active {
+  background: var(--highlight);
+}
+
+/* ===== BOARDS & CARDS ===== */
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card h2 {
+  font-size: 20px;
+  color: var(--highlight);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.tags {
+  margin-bottom: 10px;
+}
+
+.tag {
+  display: inline-block;
+  background: #e6f9f9;
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-right: 5px;
+  font-size: 12px;
+}
+
+.deadline {
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.card button {
+  background: var(--highlight);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 6px;
+  margin-top: 5px;
+}
+
+.project-badge {
+  background-color: #dff3f3;
+  color: var(--primary);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+/* ===== MODALS ===== */
+#modal,
+#messageModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#modal-content,
+.message-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+}
+
+#modal-content input,
+#modal-content textarea,
+.message-modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#modal-content button,
+.message-modal-actions button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--highlight);
+  color: white;
+}
+
+#modal-content .cancel-btn {
+  background: #ccc;
+  color: #333;
+}
+
+.message-modal-actions {
+  text-align: right;
+  margin-top: 10px;
+}
+
+#messageThread {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+/* ===== POPUP NOTIFICATION ===== */
+#popup,
+#popup-message {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: none;
+  z-index: 2000;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='img/logo_white.png') }}" alt="Infinity Logo" class="logo-img" />
+      <span class="logo-text">INFINITY</span>
+    </div>
+    <nav class="nav-menu">
+      <a href="{{ url_for('home') }}" class="nav-link">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="{{ url_for('project') }}" class="nav-link">
+        <span class="nav-icon">📁</span>
+        <span class="nav-text">My Projects</span>
+      </a>
+      <a href="{{ url_for('review') }}" class="nav-link">
+        <span class="nav-icon">📄</span>
+        <span class="nav-text">Reviews Received</span>
+      </a>
+      <a href="#" class="nav-link active">
+        <span class="nav-icon">🤝</span>
+        <span class="nav-text">Micro-Collab</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header>
+      <h1>Micro-Collab 🤝</h1>
+      <button onclick="openModal()">+ Invite to collaborate</button>
+    </header>
+
+    <!-- Filter/Search -->
+    <div class="filters">
+      <input type="search" id="searchInput" placeholder="Search by title or tag..." />
+      <button onclick="resetFilters()">Clear</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-controls">
+      <button class="tab-button active" onclick="showTab('discover')">Discover</button>
+      <button class="tab-button" onclick="showTab('mycollab')">My Collab</button>
+      <button class="tab-button" onclick="showTab('accepted')">Accepted</button>
+    </div>
+
+    <!-- Tab Sections -->
+    <div class="board-section">
+      <div class="board" id="discoverBoard"></div>
+      <div class="board" id="myCollabBoard" style="display:none;"></div>
+      <div class="board" id="acceptedBoard" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Create MicroCollab Modal -->
+  <div id="modal">
+    <div id="modal-content">
+      <h2>Create Micro-Collab</h2>
+      <input type="text" id="projectName" placeholder="Project Name" required />
+      <input type="text" id="taskTitle" placeholder="Task Title" required />
+      <textarea id="description" placeholder="Description of project idea" required></textarea>
+      <textarea id="workDescription" placeholder="What should the peer do?" required></textarea>
+      <input type="text" id="tags" placeholder="Required skills as tags (comma-separated)" required />
+      <input type="date" id="deadline" required />
+      <button onclick="submitCollab()">Create</button>
+      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Message Modal -->
+  <div id="messageModal">
+    <div class="message-modal-content">
+      <h3>Threaded Messages</h3>
+      <div id="messageThread"></div>
+      <input type="text" id="newMessage" placeholder="Type your message..." />
+      <div class="message-modal-actions">
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="closeMessageModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup for Notifications -->
+  <div id="popup-message" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: none;
+  z-index: 9999;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+">
+</div>
+
+
+  <script>
+    // microcollab.js
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('modal');
+  const popup = document.getElementById('popup-message');
+  const messageModal = document.getElementById('messageModal');
+  const messageThread = document.getElementById('messageThread');
+  const discoverBoard = document.getElementById('discoverBoard');
+  const myCollabBoard = document.getElementById('myCollabBoard');
+  const acceptedBoard = document.getElementById('acceptedBoard');
+
+  let currentThread = null;
+  let currentCollabId = null;
+
+  // Fetch data on load
+  fetchCollabs();
+
+  // ===== Modal Functions =====
+  window.openModal = () => modal.style.display = 'flex';
+  window.closeModal = () => {
+    modal.style.display = 'none';
+    document.querySelectorAll('#modal input, #modal textarea').forEach(el => el.value = '');
+  };
+
+  // ===== Popup Message =====
+  function showPopup(msg) {
+    popup.textContent = msg;
+    popup.style.display = 'block';
+    setTimeout(() => popup.style.display = 'none', 2500);
+  }
+
+  // ===== Submit MicroCollab =====
+  window.submitCollab = () => {
+    const data = {
+      projectName: document.getElementById('projectName').value.trim(),
+      taskTitle: document.getElementById('taskTitle').value.trim(),
+      description: document.getElementById('description').value.trim(),
+      workDescription: document.getElementById('workDescription').value.trim(),
+      tags: document.getElementById('tags').value.trim().split(',').map(t => t.trim()),
+      deadline: document.getElementById('deadline').value
+    };
+
+    if (!data.projectName || !data.taskTitle || !data.description || !data.workDescription || !data.deadline) {
+      return showPopup("Please fill in all fields.");
+    }
+
+    fetch('/create_microcollab', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(resp => {
+      if (resp.status === 'success') {
+        showPopup("Collab created!");
+        closeModal();
+        fetchCollabs(); // refresh
+      } else {
+        showPopup(resp.message || "Error occurred.");
+      }
+    });
+  };
+
+  // ===== Fetch Collabs =====
+  function fetchCollabs() {
+    Promise.all([
+      fetch('/get_discover_collabs').then(r => r.json()),
+      fetch('/get_my_collabs').then(r => r.json()),
+      fetch('/get_accepted_collabs').then(r => r.json())
+    ]).then(([discover, mine, accepted]) => {
+      renderBoard(discoverBoard, discover, 'discover');
+      renderBoard(myCollabBoard, mine, 'my');
+      renderBoard(acceptedBoard, accepted, 'accepted');
+    });
+  }
+
+  // ===== Render Collab Card =====
+  function renderBoard(container, dataList, type) {
+    container.innerHTML = '';
+    dataList.forEach(data => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="project-badge">${data.projectName}</div>
+        <h2>${data.taskTitle}</h2>
+        <p>${data.description}</p>
+        <p><strong>To Do:</strong> ${data.workDescription}</p>
+        <div class="tags">${data.tags.map(tag => `<span class="tag">#${tag}</span>`).join(' ')}</div>
+        <div class="deadline">Due ${data.deadline}</div>
+        <div class="actions"></div>
+      `;
+
+      const actions = card.querySelector('.actions');
+      const collabId = data._id;
+
+      if (type === 'discover') {
+        const btn = document.createElement('button');
+        btn.textContent = 'Accept';
+        btn.onclick = () => acceptCollab(collabId);
+        actions.appendChild(btn);
+      } else if (type === 'my') {
+        const msg = document.createElement('button');
+        msg.textContent = '💬 Message';
+        msg.onclick = () => openMessageModal(collabId);
+        const done = document.createElement('button');
+        done.textContent = '✅ Mark Completed';
+        done.onclick = () => completeCollab(collabId);
+        actions.appendChild(msg);
+        actions.appendChild(done);
+      } else if (type === 'accepted') {
+        const msg = document.createElement('button');
+        msg.textContent = '💬 Message';
+        msg.onclick = () => openMessageModal(collabId);
+        const decline = document.createElement('button');
+        decline.textContent = '❌ Decline';
+        decline.onclick = () => declineCollab(collabId);
+        actions.appendChild(msg);
+        actions.appendChild(decline);
+      }
+
+      container.appendChild(card);
+    });
+  }
+
+  // ===== Action Handlers =====
+  function acceptCollab(id) {
+    fetch('/accept_microcollab', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collab_id: id })
+    }).then(r => r.json()).then(res => {
+      if (res.status === 'success') {
+        showPopup('Accepted!');
+        fetchCollabs();
+      }
+    });
+  }
+
+  function declineCollab(id) {
+    fetch('/decline_microcollab', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collab_id: id })
+    }).then(r => r.json()).then(res => {
+      if (res.status === 'success') {
+        showPopup('Declined!');
+        fetchCollabs();
+      }
+    });
+  }
+
+  function completeCollab(id) {
+    fetch('/complete_microcollab', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collab_id: id })
+    }).then(r => r.json()).then(res => {
+      if (res.status === 'success') {
+        showPopup('Marked completed.');
+        fetchCollabs();
+      }
+    });
+  }
+
+  // ===== Messaging =====
+  window.openMessageModal = (collab_id) => {
+    currentCollabId = collab_id;
+    fetch(`/get_messages/${collab_id}`)
+      .then(r => r.json())
+      .then(data => {
+        messageThread.innerHTML = '';
+        data.forEach(msg => {
+          const div = document.createElement('div');
+          div.textContent = `${msg.sender}: ${msg.message}`;
+          messageThread.appendChild(div);
+        });
+        messageModal.style.display = 'flex';
+      });
+  };
+
+  window.closeMessageModal = () => {
+    messageModal.style.display = 'none';
+    currentCollabId = null;
+  };
+
+  window.sendMessage = () => {
+    const input = document.getElementById('newMessage');
+    const text = input.value.trim();
+    if (!text || !currentCollabId) return;
+
+    fetch('/send_message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collab_id: currentCollabId, message: text })
+    }).then(r => r.json()).then(res => {
+      if (res.status === 'success') {
+        const div = document.createElement('div');
+        div.textContent = `You: ${text}`;
+        messageThread.appendChild(div);
+        input.value = '';
+      }
+    });
+  };
+
+  // ===== Tabs =====
+  window.showTab = (tab) => {
+    document.getElementById('discoverBoard').style.display = 'none';
+    document.getElementById('myCollabBoard').style.display = 'none';
+    document.getElementById('acceptedBoard').style.display = 'none';
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+    if (tab === 'discover') {
+      document.getElementById('discoverBoard').style.display = 'grid';
+    } else if (tab === 'mycollab') {
+      document.getElementById('myCollabBoard').style.display = 'grid';
+    } else if (tab === 'accepted') {
+      document.getElementById('acceptedBoard').style.display = 'grid';
+    }
+
+    document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active');
+  };
+
+  // ===== Search =====
+  document.getElementById('searchInput').addEventListener('input', () => {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('#discoverBoard .card');
+    cards.forEach(card => {
+      const title = card.querySelector('h2').textContent.toLowerCase();
+      const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase());
+      card.style.display = (title.includes(term) || tags.some(t => t.includes(term))) ? 'block' : 'none';
+    });
+  });
+
+  window.resetFilters = () => {
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('#discoverBoard .card').forEach(card => {
+      card.style.display = 'block';
+    });
+  };
+});
+
+  </script>
+</body>
+</html>

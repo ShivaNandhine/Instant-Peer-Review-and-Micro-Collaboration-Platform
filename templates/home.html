@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infinity</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+</head>
+
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/logo_white.png') }}" alt="Infinity Logo" class="logo-img" />
+            <span class="logo-text">INFINITY</span>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search ideas by title, tag, or author..." />
+            <span class="search-icon">🔍</span>
+        </div>
+        <div class="icons">
+            <div class="notif-wrapper">
+                <span class="notif-icon">🔔</span>
+                <div class="notif-dropdown">
+                    <div class="notif-header">
+                        <h3>Notifications</h3>
+                        <button class="dismiss-all">Dismiss all ✖</button>
+                    </div>
+                    <ul class="notif-list">
+                    </ul>
+                </div>
+            </div>
+
+            <div class="icon-wrapper" id="user-wrapper">
+                <span class="icon">👤</span>
+                <div class="user-dropdown">
+                    <ul>
+                        <li><a href="index.html">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar-left-nav">
+
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active">
+                    <span class="nav-icon">🏡</span>
+                    <span class="nav-text">Home</span>
+                </a>
+
+                <a href="{{ url_for('project') }}" class="nav-link">
+                    <span class="nav-icon">📁</span>
+                    <span class="nav-text">My projects</span>
+                </a>
+
+                <a href="{{ url_for('review') }}" class="nav-link">
+                    <span class="nav-icon">📄</span>
+                    <span class="nav-text">Reviews Received</span>
+                </a>
+                <a href="{{ url_for('microcollab') }}" class="nav-link">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">Micro-Collab</span>
+                </a>
+            </nav>
+        </aside>
+
+
+        <main class="feed">
+
+            <div class="idea-card" id="idea1">
+                <div class="idea-header">
+                    <img src="{{ url_for('static', filename='img/avatar1.jpg') }}" alt="User Avatar" class="avatar" />
+
+                    <div class="user-info">
+                        <h3>MindMend – Mental Health App</h3>
+                        <small>by Suja · 2 hrs ago</small>
+                    </div>
+                </div>
+                <p id="content-idea1">
+                    <strong>MindMend</strong> is a comprehensive mental wellness platform thoughtfully designed for
+                    students navigating the challenges of academic life, social dynamics, and personal growth.
+                    Recognizing the unique mental health needs of Gen Z learners, MindMend offers a supportive space
+                    that combines science-backed tools with a deeply empathetic design approach.
+                    The platform empowers users to track their moods and emotions through intuitive journaling and
+                    visual mood graphs. AI-powered insights provide personalized recommendations based on behavioral
+                    patterns and emotional signals, helping students identify stress triggers and emotional trends.
+                    Daily check-ins, mindfulness practices, and mood-boosting exercises are integrated into the app to
+                    encourage regular self-care. Users can analyze their wellness progress over time with clear,
+                    friendly analytics and progress tracking.
+                    <a href="#"
+                        onclick="toggleReadMore('content-idea1', '<strong>MindMend</strong> is a comprehensive mental wellness platform thoughtfully designed for students navigating the challenges of academic life, social dynamics, and personal growth. Recognizing the unique mental health needs of Gen Z learners, MindMend offers a supportive space that combines science-backed tools with a deeply empathetic design approach. The platform empowers users to track their moods and emotions through intuitive journaling and visual mood graphs. AI-powered insights provide personalized recommendations based on behavioral patterns and emotional signals, helping students identify stress triggers and emotional trends. Daily check-ins, mindfulness practices, and mood-boosting exercises are integrated into the app to encourage regular self-care. Users can analyze their wellness progress over time with clear, friendly analytics and progress tracking. In addition to self-reflection tools, MindMend fosters connection. Students can interact within a safe peer-support network and access certified mental health professionals when needed. The experience is enhanced through customizable themes, avatars, and gamified elements like wellness streaks that encourage consistency. Designed using calming UI/UX principles with accessibility in mind, MindMend helps students build emotional resilience, manage anxiety, and feel seen — whether they’re going through exam stress, personal setbacks, or just need someone to talk to.', '<strong>MindMend</strong> is a comprehensive mental wellness platform thoughtfully designed for students navigating the challenges of academic life, social dynamics, and personal growth. Recognizing the unique mental health needs of Gen Z learners, MindMend offers a supportive space that combines science-backed tools with a deeply empathetic design approach. The platform empowers users to track their moods and emotions through intuitive journaling and visual mood graphs. AI-powered insights provide personalized recommendations based on behavioral patterns and emotional signals, helping students identify stress triggers and emotional trends. Daily check-ins, mindfulness practices, and mood-boosting exercises are integrated into the app to encourage regular self-care. Users can analyze their wellness progress over time with clear, friendly analytics and progress tracking.')">Read
+                        More</a>
+                </p>
+
+                <div>
+                    <span class="stage-label">Stage:</span>
+                    <span class="stage-tag">Prototype</span>
+                </div>
+
+                <div class="idea-tags">
+                    <span>#UIUX</span>
+                    <span>#HealthTech</span>
+                </div>
+
+                <div class="idea-footer">
+                    <span onclick="toggleLike(this)" data-count="12">❤️ 12</span>
+                    <span data-count="2" class="comment-count">💬 2</span>
+                    <span onclick="toggleBookmark(this)">🔖</span>
+                </div>
+
+                <div class="comment-bar">
+                    <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, 'idea1')" />
+                </div>
+                <ul class="comments" id="idea1-comments">
+                    <li><strong>Amit:</strong> This is exactly what students need right now. Amazing!</li>
+                    <li><strong>Neha:</strong> Can we collaborate? I’m a psychology major.</li>
+                </ul>
+            </div>
+            <div class="idea-card" id="idea1">
+                <div class="idea-header">
+                    <img src="{{ url_for('static', filename='img/avatar1.jpg') }}" alt="User Avatar" class="avatar" />
+
+                    <div class="user-info">
+                        <h3>MindMend – Mental Health App</h3>
+                        <small>by Suja · 2 hrs ago</small>
+                    </div>
+                </div>
+                <p id="content-idea2">
+                    <strong>MindMend</strong> is a comprehensive mental wellness platform thoughtfully designed for
+                    students navigating the challenges of academic life, social dynamics, and personal growth.
+                    Recognizing the unique mental health needs of Gen Z learners, MindMend offers a supportive space
+                    that combines science-backed tools with a deeply empathetic design approach.
+                    The platform empowers users to track their moods and emotions through intuitive journaling and
+                    visual mood graphs. AI-powered insights provide personalized recommendations based on behavioral
+                    patterns and emotional signals, helping students identify stress triggers and emotional trends.
+                    Daily check-ins, mindfulness practices, and mood-boosting exercises are integrated into the app to
+                    encourage regular self-care. Users can analyze their wellness progress over time with clear,
+                    friendly analytics and progress tracking.
+                    <a href="#"
+                        onclick="toggleReadMore('content-idea1', '<strong>MindMend</strong> is a comprehensive mental wellness platform thoughtfully designed for students navigating the challenges of academic life, social dynamics, and personal growth. Recognizing the unique mental health needs of Gen Z learners, MindMend offers a supportive space that combines science-backed tools with a deeply empathetic design approach. The platform empowers users to track their moods and emotions through intuitive journaling and visual mood graphs. AI-powered insights provide personalized recommendations based on behavioral patterns and emotional signals, helping students identify stress triggers and emotional trends. Daily check-ins, mindfulness practices, and mood-boosting exercises are integrated into the app to encourage regular self-care. Users can analyze their wellness progress over time with clear, friendly analytics and progress tracking. In addition to self-reflection tools, MindMend fosters connection. Students can interact within a safe peer-support network and access certified mental health professionals when needed. The experience is enhanced through customizable themes, avatars, and gamified elements like wellness streaks that encourage consistency. Designed using calming UI/UX principles with accessibility in mind, MindMend helps students build emotional resilience, manage anxiety, and feel seen — whether they’re going through exam stress, personal setbacks, or just need someone to talk to.', '<strong>MindMend</strong> is a comprehensive mental wellness platform thoughtfully designed for students navigating the challenges of academic life, social dynamics, and personal growth. Recognizing the unique mental health needs of Gen Z learners, MindMend offers a supportive space that combines science-backed tools with a deeply empathetic design approach. The platform empowers users to track their moods and emotions through intuitive journaling and visual mood graphs. AI-powered insights provide personalized recommendations based on behavioral patterns and emotional signals, helping students identify stress triggers and emotional trends. Daily check-ins, mindfulness practices, and mood-boosting exercises are integrated into the app to encourage regular self-care. Users can analyze their wellness progress over time with clear, friendly analytics and progress tracking.')">Read
+                        More</a>
+                </p>
+
+                <div>
+                    <span class="stage-label">Stage:</span>
+                    <span class="stage-tag">Prototype</span>
+                </div>
+
+                <div class="idea-tags">
+                    <span>#UIUX</span>
+                    <span>#HealthTech</span>
+                </div>
+
+                <div class="idea-footer">
+                    <span onclick="toggleLike(this)" data-count="12">❤️ 12</span>
+                    <span data-count="2" class="comment-count">💬 2</span>
+                    <span onclick="toggleBookmark(this)">🔖</span>
+                </div>
+
+                <div class="comment-bar">
+                    <input type="text" placeholder="Add a comment..." onkeypress="handleComment(event, 'idea1')" />
+                </div>
+                <ul class="comments" id="idea1-comments">
+                    <li><strong>Amit:</strong> This is exactly what students need right now. Amazing!</li>
+                    <li><strong>Neha:</strong> Can we collaborate? I’m a psychology major.</li>
+                </ul>
+            </div>
+
+
+            <!-- You can duplicate the above block and update idea2, idea3, etc. -->
+        </main>
+
+
+
+        <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+
+</body>
+
+</html>
