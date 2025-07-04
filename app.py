@@ -267,7 +267,7 @@ def summarize_feedback():
 
     headers = {
         'Content-Type': 'application/json',
-        'X-goog-api-key': 'AIzaSyBm5fAAzc5X4Fdg__yL7xNQ1YX_ryFHEUI'
+        'X-goog-api-key': 'your Gemini API key'
     }
 
     body = {
